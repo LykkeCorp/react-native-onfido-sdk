@@ -60,6 +60,7 @@
     NSString *applicantId = dictionary[@"applicantId"];
     NSArray *documentTypes =dictionary[@"documentTypes"];
     NSString *primaryColor = dictionary[@"primaryColor"];
+    NSString *locale = dictionary[@"locale"];
 
     ONFlowConfigBuilder *configBuilder = [ONFlowConfig builder];
     [configBuilder withToken:token];
@@ -76,16 +77,27 @@
     [[VideoStepConfiguration alloc] initWithShowIntroVideo: YES]];
     [configBuilder withFaceStepOfVariant: [variantBuilder buildAndReturnError: &error]];
   
-    if ([primaryColor length] > 0) {
-      ONAppearance *appearance = [[ONAppearance alloc]
-                                  initWithPrimaryColor: [self colorFromHexString: primaryColor] // background color of document type icon and capture confirmation buttons and back navigation button
-                                  primaryTitleColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0] //  text color of labels included in views such as capture confirmation buttons.
-                                  primaryBackgroundPressedColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0] //capture confirmation buttons when pressed
-                                  secondaryBackgroundPressedColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0] //capture cancel buttons when pressed
-                                  ];
-      [configBuilder withAppearance:appearance];
+    if ([locale isEqualToString:@"de"]) {
+      [configBuilder withCustomLocalizationWithTableName:@"onfido-de"];
+    }
+
+    if ([locale isEqualToString:@"fr"]) {
+      [configBuilder withCustomLocalizationWithTableName:@"onfido-fr"];
     }
   
+   if ([primaryColor length] > 0) {
+     ONAppearance *appearance = [[ONAppearance alloc]
+                                 initWithPrimaryColor: [self colorFromHexString: primaryColor] // background color of document type icon and capture confirmation buttons and back navigation button
+                                 primaryTitleColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0] //  text color of labels included in views such as capture confirmation buttons.
+                                 primaryBackgroundPressedColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0] //capture confirmation buttons when pressed
+                                 secondaryBackgroundPressedColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0] //capture cancel buttons when pressed
+                                 //fontRegular: @"PlayfairDisplay-Black"
+                                 //fontBold: @"PlayfairDisplay-Black" //(NSString * _Nullable)fontBold
+                                 supportDarkMode:false
+                                 ];
+     [configBuilder withAppearance:appearance];
+   }
+      
     NSError *configError = NULL;
     ONFlowConfig *config = [configBuilder buildAndReturnError:&configError];
     

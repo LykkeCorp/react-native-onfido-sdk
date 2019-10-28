@@ -1,6 +1,6 @@
 {
   "name": "react-native-onfido-sdk",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "homepage": "https://github.com/MCROEngineering/react-native-onfido-sdk",
   "description": "Onfido SDK for React Native",
   "main": "index.js",

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 public class RNOnfidoSdkModule extends ReactContextBaseJavaModule {
 
@@ -100,6 +101,7 @@ public class RNOnfidoSdkModule extends ReactContextBaseJavaModule {
     String token = (String) params.get("token");
     String applicantId = (String) params.get("applicantId");
     Boolean withWelcomeScreen = (Boolean) params.get("withWelcomeScreen");
+    String locale = (String) params.get("locale");
 
     if (this.isDefaultFlow(params)) {
       FlowStep[] defaultSteps = new FlowStep[]{
@@ -111,6 +113,7 @@ public class RNOnfidoSdkModule extends ReactContextBaseJavaModule {
               .withCustomFlow(defaultSteps)
               .withApplicant(applicantId)
               .withToken(token)
+              .withLocale(new Locale(locale))
               .build();
     } else if (documentTypes.size() == 1) {
       try {
@@ -124,6 +127,7 @@ public class RNOnfidoSdkModule extends ReactContextBaseJavaModule {
                 .withCustomFlow(steps)
                 .withApplicant(applicantId)
                 .withToken(token)
+                .withLocale(new Locale(locale))
                 .build();
       }
       catch (Exception e) {

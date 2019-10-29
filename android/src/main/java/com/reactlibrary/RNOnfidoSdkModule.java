@@ -103,54 +103,26 @@ public class RNOnfidoSdkModule extends ReactContextBaseJavaModule {
     Boolean withWelcomeScreen = (Boolean) params.get("withWelcomeScreen");
     String locale = (String) params.get("locale");
 
-    if (this.isDefaultFlow(params)) {
-      FlowStep[] defaultSteps = new FlowStep[]{
-              FlowStep.CAPTURE_DOCUMENT,
+    try {
+      Double docTypeObj = (Double)documentTypes.get(0);
+      DocumentType documentType = this.convertToDocumentType(docTypeObj.intValue());
+      final FlowStep[] steps = new FlowStep[]{
+              new CaptureScreenStep(documentType, CountryAlternatives.NO_COUNTRY),
               new FaceCaptureStep(FaceCaptureVariant.VIDEO)
       };
-
       return OnfidoConfig.builder()
-              .withCustomFlow(defaultSteps)
+              .withCustomFlow(steps)
               .withApplicant(applicantId)
               .withToken(token)
               .withLocale(new Locale(locale))
               .build();
-    } else if (documentTypes.size() == 1) {
-      try {
-        Double docTypeObj = (Double)documentTypes.get(0);
-        DocumentType documentType = this.convertToDocumentType(docTypeObj.intValue());
-        final FlowStep[] steps = new FlowStep[]{
-                new CaptureScreenStep(documentType, CountryAlternatives.NO_COUNTRY),
-                new FaceCaptureStep(FaceCaptureVariant.VIDEO)
-        };
-        return OnfidoConfig.builder()
-                .withCustomFlow(steps)
-                .withApplicant(applicantId)
-                .withToken(token)
-                .withLocale(new Locale(locale))
-                .build();
-      }
-      catch (Exception e) {
-        mErrorCallback.invoke(E_FAILED_TO_SHOW_ONFIDO);
-        mErrorCallback = null;
-      }
     }
+    catch (Exception e) {
+      mErrorCallback.invoke(E_FAILED_TO_SHOW_ONFIDO);
+      mErrorCallback = null;
+    }
+
     return null;
-  }
-
-  private Boolean isDefaultFlow(HashMap params) {
-    ArrayList documentTypes = (ArrayList) params.get("documentTypes");
-
-    return documentTypes == null || documentTypes.indexOf(4.0) > -1;
-  }
-
-  private Boolean isCustomFlow(HashMap params) {
-    if (isDefaultFlow(params)) {
-      return false;
-    }
-    ArrayList documentTypes = (ArrayList) params.get("documentTypes");
-
-    return documentTypes.size() > 1;
   }
 
   @Override
@@ -182,19 +154,7 @@ public class RNOnfidoSdkModule extends ReactContextBaseJavaModule {
     }
     HashMap paramsMap = params.toHashMap();
 
-    if (this.isCustomFlow(paramsMap)) {
-      Intent intent = new Intent(currentActivity, OnfidoCustomDocumentTypesActivity.class);
-      ArrayList docTypes = (ArrayList) paramsMap.get("documentTypes");
-      int[] documentTypes = new int[docTypes.size()];
-      for(int i = 0; i < docTypes.size(); i++) {
-        Double docTypeValue = (Double) docTypes.get(i);
-        documentTypes[i] = docTypeValue.intValue();
-      }
-      intent.putExtra("documentTypes", documentTypes);
-      currentActivity.startActivityForResult(intent, REQUEST_CODE_DOCUMENT_TYPE);
-    } else {
-      OnfidoConfig onfidoConfig = this.getOnfidoConfig(paramsMap);
-      client.startActivityForResult(currentActivity, REQUEST_CODE_ONFIDO, onfidoConfig);
-    }
+    OnfidoConfig onfidoConfig = this.getOnfidoConfig(paramsMap);
+    client.startActivityForResult(currentActivity, REQUEST_CODE_ONFIDO, onfidoConfig);
   }
 }

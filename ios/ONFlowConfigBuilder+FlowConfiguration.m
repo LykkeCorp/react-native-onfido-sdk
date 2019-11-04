@@ -84,6 +84,10 @@
     if ([locale isEqualToString:@"fr"]) {
       [configBuilder withCustomLocalizationWithTableName:@"onfido-fr"];
     }
+
+    if ([locale isEqualToString:@"it"]) {
+      [configBuilder withCustomLocalizationWithTableName:@"onfido-it"];
+    }
   
    if ([primaryColor length] > 0) {
      ONAppearance *appearance = [[ONAppearance alloc]

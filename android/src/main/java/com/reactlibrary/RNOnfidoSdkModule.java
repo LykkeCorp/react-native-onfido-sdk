@@ -24,7 +24,7 @@ import com.onfido.android.sdk.capture.DocumentType;
 import com.onfido.api.client.data.Applicant;
 import com.onfido.android.sdk.capture.upload.Captures;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
